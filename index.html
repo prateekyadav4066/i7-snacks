@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>i7 - Hostel Snack & Food Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4757;
+      --secondary: #2ed573;
+      --dark: #1e272e;
+      --light: #f1f2f6;
+      --card-bg: #ffffff;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: var(--light);
+      color: var(--dark);
+      padding-bottom: 90px;
+    }
+    header {
+      background: linear-gradient(135deg, #1e272e, #2f3542);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    header .brand {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--primary);
+    }
+    header .cart-btn {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Hero Section */
+    #hero-section {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(180deg, #2f3542 0%, #1e272e 100%);
+      color: white;
+    }
+    #hero-section h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    #hero-section p {
+      color: #ced6e0;
+      margin-bottom: 24px;
+      font-size: 1rem;
+    }
+    .cta-btn {
+      background: var(--primary);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 30px;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s transform;
+      box-shadow: 0 6px 16px rgba(255, 71, 87, 0.4);
+    }
+    .cta-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+    .category-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 28px 0 14px 0;
+      color: #2f3542;
+      border-left: 5px solid var(--primary);
+      padding-left: 10px;
+    }
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .item-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #e1e2e6;
+    }
+    .item-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .price-tag {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .current-price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2ed573;
+    }
+    .mrp-cut {
+      font-size: 0.95rem;
+      color: #a4b0be;
+      text-decoration: line-through;
+    }
+    .add-btn {
+      background: var(--dark);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .add-btn:hover {
+      background: var(--primary);
+    }
+
+    /* Floating Cart Indicator */
+    .floating-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 90;
+    }
+    .bar-total {
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    /* Modal / Popups */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .modal-box h2 {
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+    }
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed #ced6e0;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qty-controls button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #ced6e0;
+      background: #f1f2f6;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .form-group {
+      margin-top: 14px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #dcdde1;
+      font-size: 0.95rem;
+    }
+
+    /* UPI Box */
+    #upi-box {
+      display: none;
+      text-align: center;
+      margin-top: 14px;
+      padding: 14px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 1px dashed #2ed573;
+    }
+    #upi-box img {
+      max-width: 180px;
+      border-radius: 8px;
+      margin: 8px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Ad Popup */
+    .ad-card {
+      background: linear-gradient(135deg, #1e272e, #000);
+      color: white;
+      text-align: center;
+      border: 2px solid #ff4757;
+      position: relative;
+    }
+    .ad-badge {
+      background: #ff4757;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .ad-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .ad-founder {
+      font-size: 1.1rem;
+      color: #ffa502;
+      margin: 6px 0;
+      font-weight: 600;
+    }
+    .ad-stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 16px 0;
+      background: rgba(255,255,255,0.08);
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .ad-stat-item b {
+      font-size: 1.1rem;
+      color: #2ed573;
+      display: block;
+    }
+    .ad-close-btn {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      background: #57606f;
+      color: #fff;
+      cursor: not-allowed;
+    }
+    .ad-close-btn.active {
+      background: #ff4757;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header>
+    <div class="brand">i7 Store</div>
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart (<span id="cart-count">0</span>)
+    </button>
+  </header>
+
+  <!-- Hero View -->
+  <section id="hero-section">
+    <h1>Late Night Hostel Snacks</h1>
+    <p>Chips, Maggi, Drinks aur Biscuit seedhe aapke room par delivered!</p>
+    <button class="cta-btn" onclick="scrollToProducts()">Order Now 👇</button>
+  </section>
+
+  <!-- Products Catalog -->
+  <div class="container" id="products-catalog">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Bottom Floating Bar -->
+  <div class="floating-bar">
+    <div>
+      <span style="color:#747d8c; font-size:0.85rem;">Total Cart Value:</span>
+      <div class="bar-total">₹<span id="floating-total">0</span></div>
+    </div>
+    <button class="cta-btn" style="padding:10px 24px; font-size:0.95rem;" onclick="openCart()">Checkout 🚀</button>
+  </div>
+
+  <!-- Cart / Checkout Modal -->
+  <div class="modal-overlay" id="cart-modal">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>Aapka Order</h2>
+        <button style="border:none; background:none; font-size:1.5rem; cursor:pointer;" onclick="closeCart()">✕</button>
+      </div>
+
+      <div id="cart-items-container"></div>
+
+      <div style="margin-top:16px; font-size:1.2rem; font-weight:700; text-align:right;">
+        Subtotal: ₹<span id="modal-subtotal">0</span>
+      </div>
+
+      <div class="form-group">
+        <label>Aapka Naam</label>
+        <input type="text" id="cust-name" placeholder="Apna naam daalein..." required />
+      </div>
+
+      <div class="form-group">
+        <label>Hostel Room Number</label>
+        <input type="text" id="cust-room" placeholder="e.g. Room 204" required />
+      </div>
+
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select id="cust-payment" onchange="togglePayment(this.value)">
+          <option value="Cash on Delivery">Cash on Delivery (COD)</option>
+          <option value="UPI / Online">UPI (Online Payment)</option>
+        </select>
+      </div>
+
+      <!-- UPI QR Code View -->
+      <div id="upi-box">
+        <p style="font-weight:600; color:#2ed573;">Neeche diye QR Code par scan karke pay karein:</p>
+        <!-- Diya gaya QR Code -->
+        <img src="1000250813.jpg" alt="UPI QR Code" />
+        <p style="font-size:0.8rem; color:#747d8c;">Payment karne ke baad seedhe 'Send Order on WhatsApp' dabaayein.</p>
+      </div>
+
+      <button class="cta-btn" style="width:100%; margin-top:20px; border-radius:10px;" onclick="sendOrder()">
+        Send Order on WhatsApp 📲
+      </button>
+    </div>
+  </div>
+
+  <!-- 15-Sec Lock Advertisement Modal -->
+  <div class="modal-overlay" id="ad-modal">
+    <div class="modal-box ad-card">
+      <span class="ad-badge">Sponsored Advertisement</span>
+      <h3 class="ad-title">i7 Web Development</h3>
+      <div class="ad-founder">Founder: Prateek</div>
+      <p style="font-size:0.9rem; color:#dfe4ea; margin-top:4px;">Professional websites for business, stores & startups.</p>
+
+      <div class="ad-stats">
+        <div class="ad-stat-item">
+          <b>21+</b>
+          <span style="font-size:0.75rem; color:#a4b0be;">Major Projects</span>
+        </div>
+        <div class="ad-stat-item">
+          <b>40+</b>
+          <span style="font-size:0.75rem; color:#a4b0be;">Small Projects</span>
+        </div>
+        <div class="ad-stat-item">
+          <b>₹15,000</b>
+          <span style="font-size:0.75rem; color:#a4b0be;">Starting Price</span>
+        </div>
+      </div>
+
+      <p style="font-size:0.85rem; color:#ced6e0;">
+        Email for website design & enquiry:<br />
+        <strong style="color:#ffa502;">prateekyadav4684@gmail.com</strong>
+      </p>
+
+      <button id="ad-close-btn" class="ad-close-btn" onclick="closeAd()" disabled>
+        Wait 15s to Close (15)
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Product List from note
+    const products = [
+      // Chips & Namkeen
+      { id: 1, name: "Lays (All Flavours)", category: "Chips & Namkeen", price: 25, mrp: 30 },
+      { id: 2, name: "Kurkure", category: "Chips & Namkeen", price: 30, mrp: 35 },
+      { id: 3, name: "Mad Angles", category: "Chips & Namkeen", price: 20, mrp: 25 },
+      { id: 4, name: "Nachos", category: "Chips & Namkeen", price: 20, mrp: 25 },
+      { id: 5, name: "Taka Tak", category: "Chips & Namkeen", price: 25, mrp: 30 },
+      { id: 6, name: "Tedhe Medhe", category: "Chips & Namkeen", price: 20, mrp: 25 },
+
+      // Biscuits & Bakery
+      { id: 7, name: "Treat Croissant", category: "Biscuits & Bakery", price: 25, mrp: 30 },
+      { id: 8, name: "Dark Fantasy Bourbon", category: "Biscuits & Bakery", price: 20, mrp: 30 },
+      { id: 9, name: "Choco Pie", category: "Biscuits & Bakery", price: 15, mrp: 20 },
+
+      // Noodles
+      { id: 10, name: "Maggi Double Masala", category: "Noodles & Quick Bites", price: 20, mrp: 25 },
+      { id: 11, name: "Maggi Regular", category: "Noodles & Quick Bites", price: 15, mrp: 20 },
+
+      // Cold Drinks & Energy
+      { id: 12, name: "Monster (Chilled)", category: "Drinks & Beverages", price: 120, mrp: 130 },
+      { id: 13, name: "Coke", category: "Drinks & Beverages", price: 30, mrp: 40 }
+    ];
+
+    let cart = {};
+
+    function renderProducts() {
+      const container = document.getElementById("products-catalog");
+      const categories = [...new Set(products.map(p => p.category))];
+
+      container.innerHTML = categories.map(cat => {
+        const catItems = products.filter(p => p.category === cat);
+        return `
+          <div class="category-title">${cat}</div>
+          <div class="items-grid">
+            ${catItems.map(item => `
+              <div class="item-card">
+                <div>
+                  <div class="item-name">${item.name}</div>
+                  <div class="price-tag">
+                    <span class="current-price">₹${item.price}</span>
+                    <span class="mrp-cut">₹${item.mrp}</span>
+                  </div>
+                </div>
+                <button class="add-btn" onclick="addToCart(${item.id})">+ Add to Cart</button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      updateCartDisplay();
+    }
+
+    function updateQty(id, delta) {
+      if (!cart[id]) return;
+      cart[id] += delta;
+      if (cart[id] <= 0) delete cart[id];
+      updateCartDisplay();
+      renderCartModal();
+    }
+
+    function updateCartDisplay() {
+      let totalQty = 0;
+      let totalCost = 0;
+      for (const [id, qty] of Object.entries(cart)) {
+        const prod = products.find(p => p.id == id);
+        if (prod) {
+          totalQty += qty;
+          totalCost += prod.price * qty;
+        }
+      }
+      document.getElementById("cart-count").innerText = totalQty;
+      document.getElementById("floating-total").innerText = totalCost;
+      document.getElementById("modal-subtotal").innerText = totalCost;
+    }
+
+    function renderCartModal() {
+      const cartContainer = document.getElementById("cart-items-container");
+      const itemKeys = Object.keys(cart);
+      if (itemKeys.length === 0) {
+        cartContainer.innerHTML = "<p style='color:#747d8c; text-align:center; padding:20px 0;'>Cart khali hai!</p>";
+        return;
+      }
+      cartContainer.innerHTML = itemKeys.map(id => {
+        const prod = products.find(p => p.id == id);
+        return `
+          <div class="cart-item-row">
+            <div>
+              <strong>${prod.name}</strong>
+              <div style="font-size:0.85rem; color:#747d8c;">₹${prod.price} x ${cart[id]} = ₹${prod.price * cart[id]}</div>
+            </div>
+            <div class="qty-controls">
+              <button onclick="updateQty(${id}, -1)">-</button>
+              <span>${cart[id]}</span>
+              <button onclick="updateQty(${id}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openCart() {
+      renderCartModal();
+      document.getElementById("cart-modal").style.display = "flex";
+    }
+
+    function closeCart() {
+      document.getElementById("cart-modal").style.display = "none";
+    }
+
+    function togglePayment(val) {
+      const upiBox = document.getElementById("upi-box");
+      if (val === "UPI / Online") {
+        upiBox.style.display = "block";
+      } else {
+        upiBox.style.display = "none";
+      }
+    }
+
+    function scrollToProducts() {
+      document.getElementById("products-catalog").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function sendOrder() {
+      const name = document.getElementById("cust-name").value.trim();
+      const room = document.getElementById("cust-room").value.trim();
+      const payment = document.getElementById("cust-payment").value;
+      const itemKeys = Object.keys(cart);
+
+      if (!name || !room) {
+        alert("Kripya apna naam aur room number bharein!");
+        return;
+      }
+      if (itemKeys.length === 0) {
+        alert("Cart me kam se kam ek product add karein!");
+        return;
+      }
+
+      let orderLines = [];
+      let totalAmount = 0;
+
+      itemKeys.forEach(id => {
+        const prod = products.find(p => p.id == id);
+        const lineTotal = prod.price * cart[id];
+        totalAmount += lineTotal;
+        orderLines.push(`• ${prod.name} x ${cart[id]} = ₹${lineTotal}`);
+      });
+
+      const message = 
+`*🛍️ NAYA ORDER - i7 HOSTEL STORE*
+------------------------------
+👤 *Naam:* ${name}
+🚪 *Room No:* ${room}
+💳 *Payment:* ${payment}
+------------------------------
+*Items Ordered:*
+${orderLines.join("\n")}
+------------------------------
+💰 *Total Bill:* ₹${totalAmount}
+------------------------------
+Kripya jaldi deliver karein! 🙏`;
+
+      const whatsappNumber = "918873433731";
+      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.open(waUrl, "_blank");
+    }
+
+    // Popup Advertisement Trigger & 15-second timer
+    setTimeout(() => {
+      const adModal = document.getElementById("ad-modal");
+      const closeBtn = document.getElementById("ad-close-btn");
+      adModal.style.display = "flex";
+
+      let secondsLeft = 15;
+      const countdown = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft > 0) {
+          closeBtn.innerText = `Wait to Close (${secondsLeft}s)`;
+        } else {
+          clearInterval(countdown);
+          closeBtn.innerText = "Close Ad ✕";
+          closeBtn.disabled = false;
+          closeBtn.classList.add("active");
+        }
+      }, 1000);
+    }, 12000); // 12 seconds ke baad show hoga
+
+    function closeAd() {
+      document.getElementById("ad-modal").style.display = "none";
+    }
+
+    // Initialize
+    renderProducts();
+  </script>
+</body>
+</html>
